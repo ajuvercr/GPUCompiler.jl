@@ -1,6 +1,6 @@
 # compilation cache
 
-using Core.Compiler: retrieve_code_info, CodeInfo, MethodInstance, SSAValue, SlotNumber
+using Core.Compiler: retrieve_code_info, CodeInfo, MethodInstance, SSAValue, SlotNumber, ReturnNode
 using Base: _methods_by_ftype
 
 const compilecache = Dict{UInt, Any}()
@@ -82,7 +82,7 @@ specialization_counter = 0
                           Expr(:call, merge, NamedTuple(), kwargs),
                           Expr(:call, hash, env, id),
                           Expr(:call, SSAValue(1), SSAValue(2), check_cache, driver, spec, SSAValue(3)),
-                          Expr(:return, SSAValue(4))])
+                          ReturnNode(SSAValue(4))])
     append!(new_ci.codelocs, [1, 1, 1, 1, 1])   # see note below
     new_ci.ssavaluetypes += 5
 
