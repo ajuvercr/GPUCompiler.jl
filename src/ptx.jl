@@ -70,13 +70,8 @@ end
 function process_kernel!(job::CompilerJob{PTXCompilerTarget}, mod::LLVM.Module, kernel::LLVM.Function)
     ctx = context(mod)
 
-    # pass all bitstypes by value
-    args = classify_arguments(job, kernel)
-    for arg in args
-        if arg.cc == BITS_REF
-            push!(parameter_attributes(kernel, arg.codegen.i), EnumAttribute("byval"))
-        end
-    end
+    # work around bad byval codegen (JuliaGPU/GPUCompiler.jl#92)
+    kernel = lower_byval(job, mod, kernel)
 
     # property annotations
     annotations = LLVM.Value[kernel]
